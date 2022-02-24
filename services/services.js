@@ -24,20 +24,20 @@ class Services {
 
     static async getBlockTransactions(hash, startIndex) {
         const [err, data] = await to(axios.get(`${this.url}/block/${hash}/txs/${startIndex}`));
-        if(data.data) {
-            const txs = [];
-            data.data.map(({txid, vin}) => {
-                const _vin = vin.map(x => x.txid);
-                txs.push(
-                    {
-                        txid, vin: _vin
-                    }
-                )
-            })
-
-            return [null, txs];
+        if(err) {
+            return ["error", null]
         }
-        return [err, null];
+        const txs = [];
+        data.data.map(({txid, vin}) => {
+            const _vin = vin.map(x => x.txid);
+            txs.push(
+                {
+                    txid, vin: _vin
+                }
+            )
+        })
+
+        return [null, txs];
     }
 
     static async getBlockAllTransactions(hash) {
@@ -55,10 +55,14 @@ class Services {
                 } else {
                     hasNext = false;
                 }
+            } else {
+                hasNext = false;
             }
-            if(txs.length > 2000) {
-                return txs;
-            }
+
+            // // add this for faster return
+            // if(txs.length > 2000) {
+            //     return txs;
+            // }
         }
 
         return txs;
