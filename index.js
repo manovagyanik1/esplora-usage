@@ -41,6 +41,17 @@ async function findMaxAncestorySetsTransactions(num) {
             parentCount: 0,
             vin
         };
+
+        // insert vin transactions into the pool too.
+        vin.map(({txid}) => {
+            if(!traversedTransactions[txid]) {
+                traversedTransactions[txid] = {
+                    done: false,
+                    parentCount: 0,
+                    vin: []
+                }
+            }
+        });
     })
 
     // recursively traverse all transactions
@@ -66,7 +77,7 @@ function traverse(txid) {
     const tx = traversedTransactions[txid];
 
     // find all the parents and push them to traverse
-    const toTraverseParents = tx.vin.filter(({txid}) => traversedTransactions[txid].done === false)
+    const toTraverseParents = tx.vin?.filter(({txid}) => traversedTransactions[txid].done === false) || []
     let maxpc = tx.parentCount;
 
     toTraverseParents.map(({txid}) => {
