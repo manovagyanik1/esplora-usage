@@ -56,7 +56,7 @@ class Services {
                     hasNext = false;
                 }
             }
-            if(txs.length > 200) {
+            if(txs.length > 2000) {
                 return txs;
             }
         }
